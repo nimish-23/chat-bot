@@ -1,4 +1,5 @@
 import requests
+import json
 from app.llm.base import BaseLLM
 
 class OllamaLLM(BaseLLM):
@@ -32,3 +33,27 @@ class OllamaLLM(BaseLLM):
 
         except requests.exceptions.RequestException as e:
             raise Exception(f"Ollama API error: {str(e)}")
+
+    def stream_generate(self, messages: list, temperature: float = 0.7):
+
+        url = f"{self.base_url}/api/chat"
+
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": temperature,
+            "stream": True
+        }
+
+        try:
+            response = requests.post(url, json=payload, timeout=60, stream=True)
+            response.raise_for_status()
+
+            for line in response.iter_lines():
+                if line:
+                    data = json.loads(line)
+                    if "message" in data and "content" in data["message"]:
+                        yield data["message"]["content"]
+
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Ollama API error: {str(e)}")  

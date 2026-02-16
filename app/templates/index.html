@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot with Ollama</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="chat-header">
+        <h1>🤖 AI Chatbot</h1>
+        <p>Powered by Ollama</p>
+      </div>
+
+      <div class="chat-container" id="chatContainer">
+        <!-- Messages will appear here -->
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <textarea
+            id="messageInput"
+            placeholder="Type your message here..."
+            rows="1"
+          ></textarea>
+          <button id="sendButton" class="send-btn">
+            <span>Send</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M22 2L11 13"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M22 2L15 22L11 13L2 9L22 2Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="options">
+          <label class="toggle-container">
+            <input type="checkbox" id="streamToggle" checked />
+            <span class="toggle-label">Streaming Mode</span>
+          </label>
+          <div class="temperature-control">
+            <label for="temperature"
+              >Temperature: <span id="tempValue">0.7</span></label
+            >
+            <input
+              type="range"
+              id="temperature"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.7"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
