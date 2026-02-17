@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, Response
+import time
+from app.core.logger import logger
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -48,15 +50,30 @@ def stream_chat():
         temperature = data.get('temperature', 0.7)
         
         def generate():
-            """Generator function for streaming response"""
+            """Generator function for streaming response with timing"""
+            start_time = time.time()
+            chunk_count = 0
+            
             try:
                 for chunk in chat_service.stream_chat(messages, temperature=temperature):
+                    chunk_count += 1
                     # Send each chunk as Server-Sent Event
                     yield f"data: {chunk}\n\n"
+                
+                # Log after streaming completes
+                end_time = time.time()
+                latency = end_time - start_time
+                logger.info(
+                    f"Streaming completed | "
+                    f"Model: {chat_service.llm.model} | "
+                    f"Latency: {latency:.3f}s | "
+                    f"Chunks: {chunk_count}"
+                )
+                
             except Exception as e:
+                logger.error(f"Streaming error: {str(e)}")
                 yield f"data: [ERROR: {str(e)}]\n\n"
         
-        from flask import Response
         return Response(generate(), mimetype='text/event-stream')
         
     except ValueError as e:

@@ -39,11 +39,25 @@ chat-bot/
 │   │   └── chat_routes.py       # HTTP routes (thin layer)
 │   ├── services/
 │   │   └── chat_service.py      # Business logic and validation
-│   └── llm/
-│       ├── base.py              # Abstract base class for LLM providers
-│       └── ollama_client.py     # Ollama implementation
-├── run.py                       # Application entry point
-└── test_ollama.py              # Ollama client tests
+│   ├── llm/
+│   │   ├── base.py              # Abstract base class for LLM providers
+│   │   └── ollama_client.py     # Ollama implementation
+│   ├── core/
+│   │   ├── __init__.py
+│   │   └── logger.py            # Centralized logging configuration
+│   ├── static/
+│   │   ├── style.css            # Frontend styles
+│   │   └── script.js            # Frontend JavaScript
+│   └── templates/
+│       └── index.html           # Chat interface
+├── frontend/                    # Additional frontend resources (if any)
+├── logs/
+│   └── chatbot.log              # Application logs (auto-generated)
+├── LICENSE                      # License file
+├── README.md                    # Project documentation
+├── requirements.txt             # Python dependencies
+├── dockerfile                   # Docker configuration
+└── run.py                       # Application entry point
 ```
 
 ## ✨ Key Features Implemented
@@ -88,6 +102,27 @@ chat-bot/
 - Abstract `BaseLLM` class allows multiple AI providers
 - Easy to add OpenAI, Claude, or other LLMs
 - Configuration-driven approach
+
+### 7. **Centralized Logging System**
+
+- Production-ready logging with file rotation
+- Dual output: console + file (`logs/chatbot.log`)
+- Performance monitoring with latency tracking
+- Error tracking with full stack traces
+- Automatic log rotation (5MB per file, 3 backups)
+
+**Log Levels:**
+
+- `INFO`: Request latency, performance metrics
+- `ERROR`: Validation failures, exceptions
+- `DEBUG`: Detailed diagnostic information (available if needed)
+
+**Sample Logs:**
+
+```
+2026-02-17 20:01:36,937 | INFO | Model: llama3.2 | Latency: 18.193s | Requests: 1
+2026-02-17 20:02:13,995 | INFO | Model: llama3.2 | Latency: 15.869s | Requests: 1
+```
 
 ## 🚀 Getting Started
 
@@ -245,10 +280,11 @@ This makes the code flexible, testable, and maintainable.
 - [ ] Conversation history persistence (database integration)
 - [ ] Multiple LLM provider support (OpenAI, Claude, etc.)
 - [ ] Rate limiting
-- [ ] Request/response logging
-- [ ] Streaming responses
+- [x] Request/response logging ✅
+- [x] Streaming responses ✅
 - [ ] User authentication
 - [ ] Conversation memory management
+- [ ] Metrics dashboard for log analytics
 
 ## 📚 What I Learned
 

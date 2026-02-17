@@ -1,6 +1,8 @@
 import requests
 import json
+import time
 from app.llm.base import BaseLLM
+from app.core.logger import logger  
 
 class OllamaLLM(BaseLLM):
 
@@ -20,9 +22,19 @@ class OllamaLLM(BaseLLM):
         }
 
         try:
+            start_time = time.time()
+
             response = requests.post(url, json=payload, timeout=60)
             response.raise_for_status()
 
+            end_time = time.time()
+            latency = end_time - start_time
+
+            logger.info(
+                f"Model: {self.model} | "
+                f"Latency: {latency:.3f}s | "
+                f"Requests: 1"
+            )
             data = response.json()
 
             return {
@@ -32,7 +44,8 @@ class OllamaLLM(BaseLLM):
             }
 
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Ollama API error: {str(e)}")
+            logger.exception("Ollama API error")
+            raise 
 
     def stream_generate(self, messages: list, temperature: float = 0.7):
 
@@ -46,6 +59,8 @@ class OllamaLLM(BaseLLM):
         }
 
         try:
+            start_time = time.time()
+
             response = requests.post(url, json=payload, timeout=60, stream=True)
             response.raise_for_status()
 
@@ -55,5 +70,15 @@ class OllamaLLM(BaseLLM):
                     if "message" in data and "content" in data["message"]:
                         yield data["message"]["content"]
 
+            end_time = time.time()
+            latency = end_time - start_time
+
+            logger.info(
+                f"Model: {self.model} | "
+                f"Latency: {latency:.3f}s | "
+                f"Requests: 1"
+            )
+
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Ollama API error: {str(e)}")  
+            logger.exception("Ollama API error")
+            raise  
